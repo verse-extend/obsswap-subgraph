@@ -1,0 +1,66 @@
+specVersion: 0.0.2
+description: Obsswap is a decentralized protocol for automated token exchange on Initverse.
+repository: https://github.com/verse-extend/obsswap-subgraph
+schema:
+  file: ./schema.graphql
+graft:
+  base: Qmc7K8dKoadu1VcHfAV45pN4sPnwZcU2okV6cuU4B7qQp1
+  block: 17308000
+dataSources:
+  - kind: initverse/contract
+    name: Factory
+    network: testnet
+    source:
+      address: '0x5FB8FF7EDf1B2a5b33c44ea3d7c1F830E52ad035'
+      abi: Factory
+      startBlock: 10000834
+    mapping:
+      kind: initverse/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./src/mappings/factory.ts
+      entities:
+        - Pair
+        - Token
+      abis:
+        - name: Factory
+          file: ./abis/factory.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: ERC20SymbolBytes
+          file: ./abis/ERC20SymbolBytes.json
+        - name: ERC20NameBytes
+          file: ./abis/ERC20NameBytes.json
+      eventHandlers:
+        - event: PairCreated(indexed address,indexed address,address,uint256)
+          handler: handleNewPair
+templates:
+  - kind: initverse/contract
+    name: Pair
+    network: testnet
+    source:
+      abi: Pair
+    mapping:
+      kind: initverse/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/core.ts
+      entities:
+        - Pair
+        - Token
+      abis:
+        - name: Pair
+          file: ./abis/pair.json
+        - name: Factory
+          file: ./abis/factory.json
+      eventHandlers:
+        - event: Mint(indexed address,uint256,uint256)
+          handler: handleMint
+        - event: Burn(indexed address,uint256,uint256,indexed address)
+          handler: handleBurn
+        - event: Swap(indexed address,uint256,uint256,uint256,uint256,indexed address)
+          handler: handleSwap
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+        - event: Sync(uint112,uint112)
+          handler: handleSync
