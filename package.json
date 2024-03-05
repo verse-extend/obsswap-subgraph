@@ -1,7 +1,7 @@
 {
   "name": "obsswap-subgraph",
   "version": "1.0.0",
-  "repository": "https://github.com/graphprotocol/obsswap-subgraph",
+  "repository": "https://github.com/verse-extend/obsswap-subgraph",
   "license": "GPL-3.0-or-later",
   "scripts": {
     "codegen": "graph codegen --output-dir src/types/",
